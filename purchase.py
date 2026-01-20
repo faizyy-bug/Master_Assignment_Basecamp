@@ -1,4 +1,5 @@
 import sqlite3
+from product import Product
 
 class Purchase:
     def init(self, id: int, product: int, amount: int, currency: str, price_per_unit: float):
@@ -13,6 +14,9 @@ class Purchase:
                              [self.id, self.product, self.amount, self.currency, self.ppu])
         self.db_conn.commit()
         
+    def get_product() -> Product:
+
+
 
       # Representation method
     # This will format the output in the correct order
