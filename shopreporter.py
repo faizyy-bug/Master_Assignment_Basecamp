@@ -1,6 +1,7 @@
 import os
 import sys
 import csv
+import sqlite3
 
 from currency_exchange import CurrencyExchange
 from rating import Rating
@@ -11,7 +12,15 @@ from product import Product
 class Reporter:
     # 1 how many products are there? -> int
     def total_amount_of_products(self) -> int:
-        raise NotImplementedError()
+        conn = sqlite3.connect("shop.db")
+        cur = conn.cursor()
+        row_ids = cur.execute("SELECT id FROM products")
+        id_list = row_ids.fetchall()
+
+        return len(id_list)
+
+
+    
 
     # 2 What is the most rated product? -> Product
     def most_rated_product(self):

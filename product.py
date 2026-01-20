@@ -1,6 +1,7 @@
 import sqlite3
 import json
-from rating import Rating
+# from rating import Rating
+# from purchase import Purchase
 
 
 class Product:
@@ -14,14 +15,25 @@ class Product:
         self.db_conn = sqlite3.connect("shop.db")
       
 
-    def get_ratings(self) -> list[Rating]:
-        rows = self.db_conn.execute("SELECT rating FROM ratings WHERE product_id = ? ", self.id)
+    def get_ratings(self) -> list:
+        rows = self.db_conn.execute("SELECT rating FROM ratings WHERE product_id = ? ", [self.id])
         ratings = rows.fetchall()
+        ratings_list = []
 
-        return list(ratings)        
+        for rating in ratings:
+            rating.append(ratings_list)
+
+        return ratings_list        
     
-    def get_purchase(self, id, title, advice, category, available) -> list:
-        pass
+    def get_purchases(self) -> list:
+        rows = self.db_conn.execute("SELECT amount FROM purchases WHERE product_id = ?", [self.id])
+        purchases = rows.fetchall()
+        purchase_list = []
+
+        for purchase in purchases:
+            purchase.append(purchase_list)
+        
+        return purchase_list
 
       # Representation method
     # This will format the output in the correct order

@@ -1,7 +1,7 @@
-import os
-import sys
 import sqlite3
 import json
+from shopreporter import Reporter
+
 
 def convert_to_db(file : str):
     db_conn = sqlite3.connect("shop.db")
@@ -12,7 +12,6 @@ def convert_to_db(file : str):
     cur.execute("DELETE FROM ratings")
     db_conn.commit()
 
-    file = file
     with open(file, "r") as f:
         data = json.load(f)
     
@@ -47,7 +46,7 @@ def convert_to_db(file : str):
                 purchase_amount = p["amount"]
                 purchase_currency = p["currency"]
                 purchase_ppu = p["price_per_unit"]
-                purchase_date = p["date_time"]
+                purchase_date = p["date_time"] + "00:00:00"
                 purchase_base = db_conn.execute("""INSERT INTO purchases 
                                    (id, product_id, amount, currency, purchase_date, price_per_unit)
                                    VALUES (?, ?, ?, ?, ?, ? )""", 
@@ -59,6 +58,11 @@ def convert_to_db(file : str):
 def main() -> None:
     filename = "products.json"
     convert_to_db(filename)
+    report = Reporter()
+
+    print(report.total_amount_of_products())
+
+
 
     
 

@@ -2,21 +2,28 @@ import sqlite3
 from product import Product
 
 class Purchase:
-    def init(self, id: int, product: int, amount: int, currency: str, price_per_unit: float):
+    def __init__(self, id: int, product: int, amount: int, currency: str, price_per_unit: float):
         self.id = id
         self.product = product
         self.amount = amount
         self.currency = currency
         self.ppu = price_per_unit
         self.db_conn = sqlite3.connect("shop.db")
-        self.db_conn.execute("""INSERT INTO purchases
-                             (id, product, amount, currency, price_per_unit) VALUES(?, ?, ?, ?, ?)""",
-                             [self.id, self.product, self.amount, self.currency, self.ppu])
-        self.db_conn.commit()
-        
-    def get_product() -> Product:
 
+    def get_product(self) -> Product:
+        cursor = self.db_conn.cursor()
+        row = cursor.execute("SELECT title, advice_price, category, available FROM products WHERE id = ?", [self.id])
 
+        return Product(*row)
+    
+    def cheaper_than(self, other) -> bool:
+        if self.ppu < other.ppu:
+            return True
+
+    def more_expensive_then(self, other) -> bool:
+        if self.ppu > other.ppu:
+            return True
+          
 
       # Representation method
     # This will format the output in the correct order
