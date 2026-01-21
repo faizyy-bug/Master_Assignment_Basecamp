@@ -8,20 +8,21 @@ class Purchase:
         self.amount = amount
         self.currency = currency
         self.ppu = price_per_unit
-        self.db_conn = sqlite3.connect("shop.db")
+
 
     def get_product(self) -> Product:
-        cursor = self.db_conn.cursor()
-        row = cursor.execute("SELECT title, advice_price, category, available FROM products WHERE id = ?", [self.id])
+        with sqlite3.connect("shop.db") as db_conn:
+            cursor = db_conn.cursor()
+            row = cursor.execute("SELECT title, advice_price, category, available FROM products WHERE id = ?", [self.id])
 
         return Product(*row)
     
     def cheaper_than(self, other) -> bool:
-        if self.ppu < other.ppu:
+        if self.ppu < other:
             return True
 
-    def more_expensive_then(self, other) -> bool:
-        if self.ppu > other.ppu:
+    def more_expensive_than(self, other) -> bool:
+        if self.ppu > other:
             return True
           
 
