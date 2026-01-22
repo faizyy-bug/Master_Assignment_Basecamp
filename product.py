@@ -1,7 +1,4 @@
 import sqlite3
-import json
-# from rating import Rating
-# from purchase import Purchase
 
 
 class Product:
@@ -14,30 +11,30 @@ class Product:
       
 
     def get_ratings(self) -> list:
+        from rating import Rating
         with sqlite3.connect("shop.db") as db_conn:
 
-            rows = db_conn.execute("SELECT rating FROM ratings WHERE product_id = ? ", [self.id]).fetchall()
+            rows = db_conn.execute("SELECT id, product_id, rating, minimum_value_scale, maximum_value_scale FROM ratings WHERE product_id = ? ", [self.id]).fetchall()
             ratings_list = []
 
             for row in rows:
-                ratings_list.append(row[0])
+                ratings_list.append(Rating(id=row[0], maximum_value_scale=row[4], minimum_value_scale=row[3], product_id=row[1], rating=row[2]))
 
         return ratings_list        
     
+
     def get_purchases(self) -> list:
+        from purchase import Purchase
         with sqlite3.connect("shop.db") as db_conn:
 
-            rows = db_conn.execute("SELECT amount FROM purchases WHERE product_id = ?", [self.id]).fetchall()
+            rows = db_conn.execute("SELECT id, product_id, amount, currency, price_per_unit, purchase_date FROM purchases WHERE product_id = ?", [self.id]).fetchall()
             purchase_list = []
 
             for purchase in rows:
-                purchase_list.append(purchase[0])
+                purchase_list.append(Purchase(id= purchase[0], product_id= purchase[1], amount= purchase[2], currency= purchase[3], price_per_unit= purchase[4], purchase_datetime= purchase[5]))
 
         return purchase_list
 
-      # Representation method
-    # This will format the output in the correct order
-    # Format is @dataclass-style: Classname(attr=value, attr2=value2, ...)
     def __repr__(self) -> str:
         sorted_items = sorted(self.__dict__.items(), key=lambda item: item[0])
         return "{}({})".format(
